@@ -20,35 +20,26 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadComments();
+    _load();
   }
 
-  Future<void> _loadComments() async {
+  Future<void> _load() async {
     setState(() => _loading = true);
     try {
-      final data = await Supabase.instance.client
-          .from('comments')
-          .select('*, profiles(username)')
-          .eq('post_id', widget.postId)
-          .order('created_at');
+      final data = await Supabase.instance.client.from('comments').select('*, profiles(username)').eq('post_id', widget.postId).order('created_at');
       _comments = List<Map<String, dynamic>>.from(data);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
 
-  Future<void> _addComment() async {
+  Future<void> _add() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
     final user = context.read<AuthProvider>().currentUser;
     if (user == null) return;
-
-    await Supabase.instance.client.from('comments').insert({
-      'post_id': widget.postId,
-      'user_id': user.uid,
-      'content': text,
-    });
+    await Supabase.instance.client.from('comments').insert({'post_id': widget.postId, 'user_id': user.uid, 'content': text});
     _controller.clear();
-    await _loadComments();
+    await _load();
   }
 
   @override
@@ -64,12 +55,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     itemCount: _comments.length,
                     itemBuilder: (_, i) {
                       final c = _comments[i];
-                      final profile = c['profiles'];
-                      final username = profile is Map ? profile['username'] ?? 'usuario' : 'usuario';
-                      return ListTile(
-                        title: Text(username, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        subtitle: Text(c['content'] ?? ''),
-                      );
+                      final p = c['profiles'];
+                      final name = p is Map ? p['username'] ?? 'usuario' : 'usuario';
+                      return ListTile(title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)), subtitle: Text(c['content'] ?? ''));
                     },
                   ),
           ),
@@ -77,13 +65,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(hintText: 'Agregar un comentario...'),
-                  ),
-                ),
-                IconButton(icon: const Icon(Icons.send), onPressed: _addComment),
+                Expanded(child: TextField(controller: _controller, decoration: const InputDecoration(hintText: 'Comentario...'))),
+                IconButton(icon: const Icon(Icons.send), onPressed: _add),
               ],
             ),
           ),

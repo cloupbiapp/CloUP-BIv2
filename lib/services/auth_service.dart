@@ -8,21 +8,13 @@ class AuthService {
   Stream<AuthState> get authStateChanges => _client.auth.onAuthStateChange;
 
   Future<UserModel?> signIn(String email, String password) async {
-    final response = await _client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    if (response.user != null) {
-      return await getUser(response.user!.id);
-    }
+    final response = await _client.auth.signInWithPassword(email: email, password: password);
+    if (response.user != null) return await getUser(response.user!.id);
     return null;
   }
 
   Future<UserModel?> register(String email, String password, String username) async {
-    final response = await _client.auth.signUp(
-      email: email,
-      password: password,
-    );
+    final response = await _client.auth.signUp(email: email, password: password);
     if (response.user != null) {
       final user = UserModel(
         uid: response.user!.id,
@@ -41,9 +33,7 @@ class AuthService {
     return null;
   }
 
-  Future<void> signOut() async {
-    await _client.auth.signOut();
-  }
+  Future<void> signOut() async => await _client.auth.signOut();
 
   Future<UserModel?> getUser(String uid) async {
     try {

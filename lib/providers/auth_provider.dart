@@ -19,6 +19,13 @@ class AuthProvider extends ChangeNotifier {
       }
       notifyListeners();
     });
+    final current = _authService.currentUser;
+    if (current != null) {
+      _authService.getUser(current.id).then((u) {
+        _currentUser = u;
+        notifyListeners();
+      });
+    }
   }
 
   Future<void> signIn(String email, String password) async {

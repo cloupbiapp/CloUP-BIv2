@@ -35,14 +35,12 @@ class CloUPBIApp extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
             elevation: 0,
+            titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w700),
           ),
         ),
         home: Consumer<AuthProvider>(
           builder: (context, auth, _) {
-            if (auth.isLoggedIn) {
-              return const MainShell();
-            }
-            return const LoginScreen();
+            return auth.isLoggedIn ? const MainShell() : const LoginScreen();
           },
         ),
       ),

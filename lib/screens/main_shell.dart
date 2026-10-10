@@ -14,7 +14,6 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _index = 0;
-
   final _screens = const [
     HomeScreen(),
     ReelsScreen(),

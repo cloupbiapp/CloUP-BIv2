@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,9 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthProvider>().signIn(_email.text.trim(), _password.text);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
     if (mounted) setState(() => _loading = false);
   }
@@ -37,9 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Text('CloUP BI', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
               const SizedBox(height: 32),
-              TextField(controller: _email, decoration: const InputDecoration(labelText: 'Email')),
+              TextField(controller: _email, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
               const SizedBox(height: 12),
-              TextField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña')),
+              TextField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña', border: OutlineInputBorder())),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -47,6 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _loading ? null : _login,
                   child: _loading ? const CircularProgressIndicator() : const Text('Iniciar sesión'),
                 ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
+                child: const Text('Crear cuenta'),
               ),
             ],
           ),
